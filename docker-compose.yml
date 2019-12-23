@@ -8,6 +8,8 @@ services:
       - 1935:1935
     volumes:
       - hls:/hls
+    depends_on:
+      - web
 
   web:
     build: .
