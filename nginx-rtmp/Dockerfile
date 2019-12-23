@@ -60,7 +60,7 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
 
 
 # Configure System
-RUN apk add ncurses bash
+RUN apk add ncurses bash htop
 COPY .bashrc /tmp/.bashrc
 RUN cat /tmp/.bashrc >> /root/.bashrc
 
