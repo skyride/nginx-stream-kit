@@ -6,9 +6,38 @@ services:
       context: nginx-rtmp/
     ports:
       - 1935:1935
-      - 8000:8000
     volumes:
       - hls:/hls
 
+  web:
+    build: .
+    command: ./manage.py runserver 0:8000
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+      - static:/static
+      - media:/media
+      - hls:/hls
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:5.0-alpine
+    volumes:
+      - redisdata:/data
+
 volumes:
   hls:
+  pgdata:
+  redisdata:
+  media:
+  static:
