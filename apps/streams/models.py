@@ -28,3 +28,9 @@ class Stream(models.Model):
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
+
+    class Meta:
+        ordering = ["created"]
+
+    def __str__(self):
+        return str(self.id)
