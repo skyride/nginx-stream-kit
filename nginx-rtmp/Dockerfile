@@ -12,10 +12,10 @@ RUN tar -xvf nginx-1.17.6.tar.gz
 # Download RTMP module
 RUN git clone https://github.com/arut/nginx-rtmp-module.git
 
-# Build requirements
+# Build dependencies
 RUN apk add build-base openssl-dev zlib-dev
 
-# Build
+# Build and install Nginx
 WORKDIR /build/nginx-1.17.6
 ARG CFLAGS="-Wno-error"
 RUN ./configure --add-module=/build/nginx-rtmp-module --without-http_rewrite_module
@@ -57,3 +57,14 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
     PATH="/bin:$PATH" make -j 4 && \
     make install && \
     hash -r
+
+
+# Configure System
+RUN apk add ncurses bash
+COPY .bashrc /tmp/.bashrc
+RUN cat /tmp/.bashrc >> /root/.bashrc
+
+COPY nginx.conf /etc/nginx/
+RUN ln -s /usr/local/nginx/sbin/nginx /bin/nginx
+
+CMD ["nginx", "-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"];

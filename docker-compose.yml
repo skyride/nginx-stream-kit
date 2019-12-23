@@ -4,3 +4,11 @@ services:
   nginx-rtmp:
     build:
       context: nginx-rtmp/
+    ports:
+      - 1935:1935
+      - 80:80
+    volumes:
+      - hls:/hls
+
+volumes:
+  hls:

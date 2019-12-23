@@ -1,0 +1,1 @@
+export PS1="\[\033[38;5;14m\][\u@nginx-rtmp:\w] \[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\]"
