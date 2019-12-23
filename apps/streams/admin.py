@@ -14,3 +14,7 @@ class StreamAdmin(admin.ModelAdmin):
         "created",
         "last_updated"
     )
+    list_filter = (
+        "app",
+        "status"
+    )
