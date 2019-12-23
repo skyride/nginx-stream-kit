@@ -19,7 +19,7 @@ RUN apk add build-base openssl-dev zlib-dev
 WORKDIR /build/nginx-1.17.6
 ARG CFLAGS="-Wno-error"
 RUN ./configure --add-module=/build/nginx-rtmp-module --without-http_rewrite_module
-RUN make
+RUN make -j 4
 RUN make install
 
 # Download ffmpeg and dependencies
@@ -30,7 +30,7 @@ RUN git -C fdk-aac pull 2> /dev/null || git clone --depth 1 https://github.com/m
     cd fdk-aac && \
     autoreconf -fiv && \
     ./configure --prefix="/ffmpeg_build" --disable-shared && \
-    make && \
+    make -j 4 && \
     make install
 RUN apk add lame-dev opus-dev
 
@@ -54,6 +54,6 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
     --enable-libx264 \
     --enable-libx265 \
     --enable-nonfree && \
-    PATH="/bin:$PATH" make && \
+    PATH="/bin:$PATH" make -j 4 && \
     make install && \
     hash -r
