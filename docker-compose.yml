@@ -1,6 +1,18 @@
 version: "3.0"
 
 services:
+  nginx:
+    build:
+      context: nginx/
+    ports:
+      - 8000:8000
+    volumes:
+      - static:/static
+      - media:/media
+      - hls:/hls
+    depends_on:
+      - web
+
   nginx-rtmp:
     build:
       context: nginx-rtmp/
@@ -16,8 +28,6 @@ services:
     command: ./manage.py runserver 0:8000
     env_file:
       - .env
-    ports:
-      - 8000:8000
     volumes:
       - .:/app
       - static:/static
