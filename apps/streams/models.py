@@ -54,3 +54,6 @@ class Distribution(models.Model):
 
     def __str__(self):
         return f"{self.stream.id} - {self.name}"
+
+    def get_playlist_path(self):
+        return f"/hls/{self.stream.key}__{self.key}.m3u8"

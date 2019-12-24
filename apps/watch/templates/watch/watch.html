@@ -1,0 +1,22 @@
+<!-- CSS  -->
+<link href="https://vjs.zencdn.net/7.2.3/video-js.css" rel="stylesheet">
+
+
+<!-- HTML -->
+<div align="middle">
+    <video id='hls'  class="video-js vjs-default-skin" width="1600" height="900" controls>
+        <source type="application/x-mpegURL" src="{{ distribution.get_playlist_path }}">
+    </video>
+</div>
+
+
+<!-- JS code -->
+<!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+<script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+<script src="https://unpkg.com/browse/@videojs/http-streaming@1.11.2/dist/videojs-http-streaming.min.js"></script>
+<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+
+<script>
+    var player = videojs('hls');
+    player.play();
+</script>
