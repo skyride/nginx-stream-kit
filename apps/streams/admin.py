@@ -11,8 +11,8 @@ class StreamAdmin(admin.ModelAdmin):
         "app",
         "key",
         "source_ip",
-        "created",
-        "last_updated"
+        "started",
+        "stopped"
     )
     list_filter = (
         "app",
