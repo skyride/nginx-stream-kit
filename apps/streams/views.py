@@ -67,13 +67,4 @@ class OnDistributionDoneView(View):
         """
         Triggered by nginx-rtmp when a distribution of a stream stops.
         """
-        key = request.POST['name'].split("__")[0]
-        stream: Stream = Stream.objects.get(
-            key=key,
-            status="live")
-
-        distribution_key: str = request.POST['name'].split("__")[1]
-        distribution: Distribution = stream.distributions.get(
-            key=distribution_key)
-
         return HttpResponse()
