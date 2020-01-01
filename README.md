@@ -18,6 +18,7 @@ cd nginx-stream-kit
 docker-compose build
 docker-compose run --rm web ./manage.py migrate
 docker-compose run --rm web ./manage.py collectstatic
+echo SECRET_KEY=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-32} | head -n 1` >> .env
 ```
 
 You can create an account to login to the `/admin` panel using the following command:
@@ -30,3 +31,10 @@ You can create an account to login to the `/admin` panel using the following com
 Access the system at `http://localhost:2323/`. You can stream to the system using any RTMP streaming tool at
 `rtmp://localhost/ingest/{STREAM_KEY}`. The stream key at current is anything you want. The stream can then be
 accessed at `http://localhost:2323/watch/{STREAM_KEY}` or from the list at `http://localhost:2323/`.
+
+### Production
+
+In production use this command to bring it up with gunicorn instead of the Django local development server as a
+background process.
+
+`docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
