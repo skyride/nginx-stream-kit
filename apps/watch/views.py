@@ -42,3 +42,15 @@ class WatchByKeyView(WatchView):
         return get_object_or_404(Stream,
             key=self.kwargs['key'],
             status="live")
+
+
+class LiveStreamListView(TemplateView):
+    """
+    Very basic listing view which shows currently live streams.
+    """    
+    template_name = "watch/list_streams.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['streams'] = Stream.objects.filter(status="live")
+        return context
