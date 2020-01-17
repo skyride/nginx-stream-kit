@@ -1,8 +1,10 @@
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
+from rest_framework import mixins, viewsets
 
-from .models import Stream
+from .serializers import DistributionSerializer, SegmentSerializer
+from .models import Stream, Distribution, Segment
 
 
 class OnPublishStartView(View):
@@ -41,3 +43,17 @@ class OnPublishDoneView(View):
 
         print(f"Stopped stream {stream.id} from /{stream.app}/{stream.key}")
         return HttpResponse()
+
+
+class DistributionViewSet(mixins.ListModelMixin,
+                          mixins.CreateModelMixin,
+                          viewsets.GenericViewSet):
+    queryset = Distribution.objects.all()
+    serializer_class = DistributionSerializer
+
+
+class SegmentViewSet(mixins.ListModelMixin,
+                     mixins.CreateModelMixin,
+                     viewsets.GenericViewSet):
+    queryset = Segment.objects.all()
+    serializer_class = SegmentSerializer
