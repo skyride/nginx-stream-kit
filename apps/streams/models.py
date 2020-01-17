@@ -37,23 +37,3 @@ class Stream(models.Model):
 
     def __str__(self):
         return str(self.id)
-
-
-class Distribution(models.Model):
-    """
-    A distribution of a stream.
-    """
-    stream = models.ForeignKey(Stream,
-        related_name="distributions",
-        on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
-    key = models.CharField(max_length=128)
-
-    created = models.DateTimeField(db_index=True, auto_now_add=True)
-    last_updated = models.DateTimeField(db_index=True, auto_now=True)
-
-    def __str__(self):
-        return f"{self.stream.id} - {self.name}"
-
-    def get_playlist_path(self):
-        return f"/hls/{self.stream.key}__{self.key}.m3u8"
