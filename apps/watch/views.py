@@ -1,26 +1,56 @@
-from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404, render
-from django.views import View
+from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404
 
-from apps.streams.models import Distribution, Segment
+from apps.streams.models import Stream, Distribution
 
 
-class DistributionPlaylistView(View):
-    template = "watch/playlists/distribution.m3u8"
+class WatchView(TemplateView):
+    template_name = "watch/watch.html"
 
-    def get(self, request, distribution_id):
+    def get_context_data(self, **kwargs):
+        stream = self._get_stream()
+        distribution: Distribution = stream.distributions.get(key="source")
+
+        context = super().get_context_data(**kwargs)
+        context['distribution'] = distribution
+        return context
+
+    def _get_stream(self) -> Stream:
         """
-        Return a live m3u8 file for this distribution.
+        Returns a stream object. This is a dummy method which should be
+        overriden by a subclass.
         """
-        distribution: Distribution = get_object_or_404(Distribution,
-            id=distribution_id,
-            stream__status="live")
+        raise NotImplementedError
 
-        segments = distribution.segments.order_by('-sequence_number')[:6]
-        segments = list(reversed(segments))
-        context = {'segments': segments}
 
-        return HttpResponse(
-            content=render(request, self.template, context),
-            content_type="application/x-mpegURL"
-            )
+class WatchByStreamIdView(WatchView):
+    def _get_stream(self) -> Stream:
+        """
+        Attempts to get the stream by using the UUID kwarg provided from
+        the URL pattern.
+        """
+        return get_object_or_404(Stream,
+            id=self.kwargs['id'],
+            status="live")
+
+
+class WatchByKeyView(WatchView):
+    def _get_stream(self) -> Stream:
+        """
+        Attempts to get the stream using the key used on the ingest.
+        """
+        return get_object_or_404(Stream,
+            key=self.kwargs['key'],
+            status="live")
+
+
+class LiveStreamListView(TemplateView):
+    """
+    Very basic listing view which shows currently live streams.
+    """    
+    template_name = "watch/list_streams.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['streams'] = Stream.objects.filter(status="live")
+        return context

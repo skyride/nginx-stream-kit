@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     'apps.streams',
+    'apps.playlists',
     'apps.watch'
 ]
 
