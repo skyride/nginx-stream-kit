@@ -62,7 +62,7 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
 # Install Python dependencies
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
-
+COPY uploader.py /app/uploader.py
 
 # Configure System
 RUN apk add ncurses bash htop

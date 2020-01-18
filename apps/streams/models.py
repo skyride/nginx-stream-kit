@@ -57,7 +57,7 @@ class Distribution(models.Model):
         unique_together = ("stream", "name")
 
     def __str__(self):
-        return self.name
+        return f"{self.stream}/{self.stream.key}: {self.name}"
 
 
 def generate_segment_filename(instance, filename):

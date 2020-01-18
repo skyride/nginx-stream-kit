@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'django_filters',
 
     'apps.streams',
     'apps.watch'
@@ -72,6 +73,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'streamkit.wsgi.application'
+
+
+# REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend']
+}
 
 
 # Database

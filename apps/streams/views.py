@@ -25,6 +25,11 @@ class OnPublishStartView(View):
             source_ip=request.POST['addr'],
             started=now())
 
+        # Also create a "source" distribution
+        Distribution.objects.create(
+            stream=stream,
+            name="source")
+
         print(f"Started stream {stream.id} from /{stream.app}/{stream.key}")
         return HttpResponse()
 
@@ -49,8 +54,9 @@ class OnPublishDoneView(View):
 class StreamViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     viewsets.GenericViewSet):
-    queryset = Stream.objects.filter(status="live")
+    queryset = Stream.objects.all()
     serializer_class = StreamSerializer
+    filterset_fields = ['status', 'key']
 
 
 class DistributionViewSet(mixins.ListModelMixin,
@@ -58,10 +64,12 @@ class DistributionViewSet(mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     queryset = Distribution.objects.all()
     serializer_class = DistributionSerializer
+    filterset_fields = ['stream', 'name']
 
 
 class SegmentViewSet(mixins.ListModelMixin,
                      mixins.CreateModelMixin,
                      viewsets.GenericViewSet):
-    queryset = Segment.objects.all()
+    queryset = Segment.objects.order_by('-sequence_number')
     serializer_class = SegmentSerializer
+    filterset_fields = ['distribution']
