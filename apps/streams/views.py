@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, pagination
 
 from .serializers import (
     StreamSerializer, DistributionSerializer, SegmentSerializer)
@@ -72,4 +72,6 @@ class SegmentViewSet(mixins.ListModelMixin,
                      viewsets.GenericViewSet):
     queryset = Segment.objects.order_by('-sequence_number')
     serializer_class = SegmentSerializer
+    pagination_class = pagination.LimitOffsetPagination
+    page_size = 150
     filterset_fields = ['distribution']

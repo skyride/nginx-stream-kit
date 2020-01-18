@@ -27,7 +27,7 @@ def get_stream():
         raise Exception(f"Failed to fetch stream with key {STREAM_KEY}, "
                         f"{response.status_code}")
 
-    return response.json()[0]
+    return response.json()['results'][0]
 
 
 def get_distribution(stream_id):
@@ -41,7 +41,7 @@ def get_distribution(stream_id):
         raise Exception(f"Failed to fetch distribution with stream ID "
                         f"{stream_id}, {response.status_code}")
 
-    return response.json()[0]
+    return response.json()['results'][0]
 
 
 def upload_segment(file_id):
