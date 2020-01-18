@@ -1,0 +1,8 @@
+{% autoescape off %}#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-MEDIA-SEQUENCE:{{ segments.0.sequence_number }}
+#EXT-X-TARGETDURATION:8
+{% for segment in segments %}#EXTINF:5,
+{{ segment.file.url }}
+{% endfor %}
+{% endautoescape %}
