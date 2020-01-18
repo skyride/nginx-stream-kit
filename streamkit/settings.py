@@ -113,6 +113,7 @@ CACHES = {
 # Media Files
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL']
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('S3_CUSTOM_DOMAIN', None)
 AWS_S3_REGION_NAME = os.environ['S3_REGION_NAME']
 AWS_STORAGE_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
 AWS_ACCESS_KEY_ID = os.environ['S3_ACCESS_KEY']
