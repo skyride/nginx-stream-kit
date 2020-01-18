@@ -5,7 +5,7 @@
 <!-- HTML -->
 <div align="middle">
     <video id='hls'  class="video-js vjs-default-skin" width="1600" height="900" controls>
-        <source type="application/x-mpegURL" src="{{ distribution.get_playlist_path }}">
+        <source type="application/x-mpegURL" src="{% url 'playlists:distribution_live' distribution.id %}">
     </video>
 </div>
 

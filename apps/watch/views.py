@@ -9,7 +9,7 @@ class WatchView(TemplateView):
 
     def get_context_data(self, **kwargs):
         stream = self._get_stream()
-        distribution: Distribution = stream.distributions.get(key="source")
+        distribution: Distribution = stream.distributions.get(name="source")
 
         context = super().get_context_data(**kwargs)
         context['distribution'] = distribution
