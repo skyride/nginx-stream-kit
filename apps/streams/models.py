@@ -41,19 +41,43 @@ class Stream(models.Model):
 
 class Distribution(models.Model):
     """
-    A distribution of a stream.
+    A distribution is an encoded version of a stream. E.g. 480p, 240p,
+    or source.
     """
+    id = models.UUIDField(primary_key=True, default=uuid4)
     stream = models.ForeignKey(Stream,
         related_name="distributions",
         on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
-    key = models.CharField(max_length=128)
+    name = models.CharField(max_length=64, db_index=True)
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
 
-    def __str__(self):
-        return f"{self.stream.id} - {self.name}"
+    class Meta:
+        unique_together = ("stream", "name")
 
-    def get_playlist_path(self):
-        return f"/hls/{self.stream.key}__{self.key}.m3u8"
+    def __str__(self):
+        return f"{self.stream}/{self.stream.key}: {self.name}"
+
+
+def generate_segment_filename(instance, filename):
+    return f"{instance.distribution_id}/{uuid4()}.ts"
+
+class Segment(models.Model):
+    """
+    A segment is a single video file as part of a distribution.
+    """
+    distribution = models.ForeignKey(Distribution,
+        related_name="segments",
+        on_delete=models.CASCADE)
+    sequence_number = models.IntegerField()
+    file = models.FileField(upload_to=generate_segment_filename)
+
+    created = models.DateTimeField(db_index=True, auto_now_add=True)
+    last_updated = models.DateTimeField(db_index=True, auto_now=True)
+
+    class Meta:
+        unique_together = ("distribution", "sequence_number")
+
+    def __str__(self):
+        return str(self.file)

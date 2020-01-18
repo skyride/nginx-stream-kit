@@ -1,8 +1,11 @@
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
+from rest_framework import mixins, viewsets, pagination
 
-from .models import Stream, Distribution
+from .serializers import (
+    StreamSerializer, DistributionSerializer, SegmentSerializer)
+from .models import Stream, Distribution, Segment
 
 
 class OnPublishStartView(View):
@@ -21,6 +24,11 @@ class OnPublishStartView(View):
             client_id=int(request.POST['clientid']),
             source_ip=request.POST['addr'],
             started=now())
+
+        # Also create a "source" distribution
+        Distribution.objects.create(
+            stream=stream,
+            name="source")
 
         print(f"Started stream {stream.id} from /{stream.app}/{stream.key}")
         return HttpResponse()
@@ -43,28 +51,27 @@ class OnPublishDoneView(View):
         return HttpResponse()
 
 
-class OnDistributionStartView(View):
-    def post(self, request):
-        """
-        Triggered by nginx-rtmp when a distribution of a stream starts.
-        """
-        key = request.POST['name'].split("__")[0]
-        stream: Stream = Stream.objects.get(
-            key=key,
-            status="live")
-
-        distribution_key: str = request.POST['name'].split("__")[1]
-        distribution, _ = Distribution.objects.get_or_create(
-            stream=stream,
-            name=distribution_key.title(),
-            key=distribution_key)
-
-        return HttpResponse()
+class StreamViewSet(mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Stream.objects.all()
+    serializer_class = StreamSerializer
+    filterset_fields = ['status', 'key']
 
 
-class OnDistributionDoneView(View):
-    def post(self, request):
-        """
-        Triggered by nginx-rtmp when a distribution of a stream stops.
-        """
-        return HttpResponse()
+class DistributionViewSet(mixins.ListModelMixin,
+                          mixins.CreateModelMixin,
+                          viewsets.GenericViewSet):
+    queryset = Distribution.objects.all()
+    serializer_class = DistributionSerializer
+    filterset_fields = ['stream', 'name']
+
+
+class SegmentViewSet(mixins.ListModelMixin,
+                     mixins.CreateModelMixin,
+                     viewsets.GenericViewSet):
+    queryset = Segment.objects.order_by('-sequence_number')
+    serializer_class = SegmentSerializer
+    pagination_class = pagination.LimitOffsetPagination
+    page_size = 150
+    filterset_fields = ['distribution']

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Stream, Distribution
+from .models import Stream, Distribution, Segment
 
 
 @admin.register(Stream)
@@ -26,11 +26,15 @@ class DistributionAdmin(admin.ModelAdmin):
         "id",
         "stream",
         "name",
-        "key",
-        "created",
-        "last_updated"
+        "created"
     )
-    list_filter = (
-        "name",
-        "key"
+
+
+@admin.register(Segment)
+class SegmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "distribution",
+        "sequence_number",
+        "created"
     )

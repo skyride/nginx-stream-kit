@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+    'django_filters',
+
     'apps.streams',
+    'apps.playlists',
     'apps.watch'
 ]
 
@@ -72,6 +76,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'streamkit.wsgi.application'
 
 
+# REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 30
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -94,6 +108,18 @@ CACHES = {
         }
     }
 }
+
+
+# Media Files
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL']
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('S3_CUSTOM_DOMAIN', None)
+AWS_S3_REGION_NAME = os.environ['S3_REGION_NAME']
+AWS_STORAGE_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
+AWS_ACCESS_KEY_ID = os.environ['S3_ACCESS_KEY']
+AWS_SECRET_ACCESS_KEY = os.environ['S3_SECRET_KEY']
+AWS_AUTO_CREATE_BUCKET = False
+AWS_DEFAULT_ACL = 'public-read'
 
 
 # Password validation

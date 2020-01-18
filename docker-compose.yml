@@ -19,6 +19,7 @@ services:
     ports:
       - ${RTMP_PORT}:1935
     volumes:
+      - ./nginx-rtmp:/app
       - hls:/hls
     depends_on:
       - web
