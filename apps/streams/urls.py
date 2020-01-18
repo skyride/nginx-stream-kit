@@ -5,6 +5,7 @@ from . import views
 
 
 router = DefaultRouter()
+router.register(r"streams", views.StreamViewSet)
 router.register(r"distributions", views.DistributionViewSet)
 router.register(r"segments", views.SegmentViewSet)
 

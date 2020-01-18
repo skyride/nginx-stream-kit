@@ -3,7 +3,8 @@ from django.utils.timezone import now
 from django.views import View
 from rest_framework import mixins, viewsets
 
-from .serializers import DistributionSerializer, SegmentSerializer
+from .serializers import (
+    StreamSerializer, DistributionSerializer, SegmentSerializer)
 from .models import Stream, Distribution, Segment
 
 
@@ -43,6 +44,13 @@ class OnPublishDoneView(View):
 
         print(f"Stopped stream {stream.id} from /{stream.app}/{stream.key}")
         return HttpResponse()
+
+
+class StreamViewSet(mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Stream.objects.filter(status="live")
+    serializer_class = StreamSerializer
 
 
 class DistributionViewSet(mixins.ListModelMixin,

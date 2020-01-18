@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from .models import Distribution, Segment
+from .models import Stream, Distribution, Segment
+
+
+class StreamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stream
+        fields = "__all__"
 
 
 class DistributionSerializer(serializers.ModelSerializer):

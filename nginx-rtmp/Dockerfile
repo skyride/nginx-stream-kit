@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM python:3.8-alpine3.11
 
 WORKDIR /build
 
@@ -57,6 +57,11 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
     PATH="/bin:$PATH" make -j 4 && \
     make install && \
     hash -r
+
+
+# Install Python dependencies
+COPY requirements.txt /tmp/
+RUN pip install -r /tmp/requirements.txt
 
 
 # Configure System
