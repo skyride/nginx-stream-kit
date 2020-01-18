@@ -47,6 +47,7 @@ class TranscodeProfile(models.Model):
 
     video_codec = models.CharField(max_length=64)
     video_bitrate = models.IntegerField()
+    video_width = models.IntegerField()
     audio_codec = models.CharField(max_length=64)
     audio_bitrate = models.IntegerField()
     is_active = models.BooleanField(default=False)
