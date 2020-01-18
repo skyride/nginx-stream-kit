@@ -49,3 +49,4 @@ COPY .bashrc /tmp/.bashrc
 RUN cat /tmp/.bashrc >> /root/.bashrc
 
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=streamkit.settings

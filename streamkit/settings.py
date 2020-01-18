@@ -26,6 +26,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = bool(int(os.environ.get('DEBUG', "0")))
 
 ALLOWED_HOSTS = ["*"]
+REDIS_HOST = os.environ.get('REDIS_HOST', 'redis:6379')
+AMQP_HOST = os.environ.get('AMQP_HOST', 'rabbitmq')
 
 
 # Application definition
@@ -88,7 +90,6 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -98,16 +99,35 @@ DATABASES = {
     }
 }
 
-
+# Cache
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': 'redis:6379',
+        'LOCATION': REDIS_HOST,
         'OPTIONS': {
             'DB': 1
         }
     }
 }
+
+
+# Celery
+BROKER_URL = f"amqp://{AMQP_HOST}"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}/2"
+CELERY_IGNORE_RESULT = False
+CELERY_TASK_RESULT_EXPIRES = 1200
+
+CELERY_DISABLE_RATE_LIMITS = True
+CELERYD_TASK_SOFT_TIME_LIMIT = 300
+CELERYD_PREFETCH_MULTIPLIER = 1
+CELERY_STORE_ERRORS_EVEN_IF_IGNORED = False
+
+from kombu import Exchange, Queue
+CELERY_DEFAULT_QUEUE = "medium"
+CELERY_QUEUES = [
+    Queue('transcode', Exchange('transcode'), routing_key="transcode"),
+    Queue('medium', Exchange('medium'), routing_key="medium")
+]
 
 
 # Media Files
