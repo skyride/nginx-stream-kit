@@ -23,7 +23,6 @@ class StreamAdmin(admin.ModelAdmin):
 @admin.register(TranscodeProfile)
 class TranscodeProfileAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
         "name",
         "video_codec",
         "video_bitrate",

@@ -15,7 +15,7 @@ RUN apk add lame-dev opus-dev
 # Compile and install ffmpeg
 WORKDIR /build
 RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
-    tar xjvf ffmpeg-snapshot.tar.bz2 && \
+    tar xjf ffmpeg-snapshot.tar.bz2 && \
     cd ffmpeg && \
     PKG_CONFIG_PATH="/ffmpeg_build/lib/pkgconfig" ./configure \
     --prefix="/ffmpeg_build" \
@@ -31,7 +31,8 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
     --enable-libvpx \
     --enable-libx264 \
     --enable-libx265 \
-    --enable-nonfree && \
+    --enable-nonfree \
+    --enable-openssl && \
     PATH="/bin:$PATH" make -j 4 && \
     make install && \
     hash -r
@@ -42,7 +43,7 @@ WORKDIR /app
 # Python requirements
 RUN apk add --no-cache postgresql-dev
 COPY requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # .bashrc
 COPY .bashrc /tmp/.bashrc

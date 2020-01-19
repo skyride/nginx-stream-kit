@@ -8,6 +8,19 @@ STREAM_STATUS_CHOICES = [
     ("finished", "Finished")
 ]
 
+VIDEO_PROFILES = [
+    "ultrafast",
+    "superfast",
+    "veryfast",
+    "faster",
+    "fast",
+    "medium",
+    "slow",
+    "slower",
+    "veryslow",
+    "placebo"
+]
+
 
 class Stream(models.Model):
     """
@@ -48,6 +61,10 @@ class TranscodeProfile(models.Model):
     video_codec = models.CharField(max_length=64)
     video_bitrate = models.IntegerField()
     video_width = models.IntegerField()
+    video_preset = models.CharField(
+        max_length=32,
+        choices=[(choice, choice.title()) for choice in VIDEO_PROFILES],
+        default="veryfast")
     audio_codec = models.CharField(max_length=64)
     audio_bitrate = models.IntegerField()
     is_active = models.BooleanField(default=False)
@@ -98,6 +115,9 @@ class Segment(models.Model):
         on_delete=models.CASCADE)
     sequence_number = models.IntegerField()
     file = models.FileField(upload_to=generate_segment_filename)
+    transcode_command = models.TextField(blank=True)
+    transcode_stdout = models.TextField(blank=True)
+    transcode_stderr = models.TextField(blank=True)
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
