@@ -21,6 +21,14 @@ VIDEO_PROFILES = [
     "placebo"
 ]
 
+VIDEO_CODEC_CHOICES = [
+    ("libx264", "h264"),
+]
+
+AUDIO_CODEC_CHOICES = [
+    ("libfdk_aac", "AAC"),
+]
+
 
 class Stream(models.Model):
     """
@@ -58,14 +66,14 @@ class TranscodeProfile(models.Model):
     """
     name = models.CharField(max_length=64)
 
-    video_codec = models.CharField(max_length=64)
+    video_codec = models.CharField(max_length=64, choices=VIDEO_CODEC_CHOICES)
     video_bitrate = models.IntegerField()
     video_width = models.IntegerField()
     video_preset = models.CharField(
         max_length=32,
         choices=[(choice, choice.title()) for choice in VIDEO_PROFILES],
         default="veryfast")
-    audio_codec = models.CharField(max_length=64)
+    audio_codec = models.CharField(max_length=64, choices=AUDIO_CODEC_CHOICES)
     audio_bitrate = models.IntegerField()
     is_active = models.BooleanField(default=False)
 

@@ -38,9 +38,15 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
             acodec=profile.audio_codec,
             audio_bitrate=profile.audio_bitrate)
     )
-    transcode_command = cmd.compile()
-    # We need to use copy timecode
-    transcode_command.insert(1, "-copyts")
+    transcode_command = [
+        "ffmpeg", "-copyts",
+        "-i", source_segment.file.url,
+        "-vf", f"scale={profile.video_width}:-1",
+        "-vcodec", profile.video_codec, "-vb", str(profile.video_bitrate),
+        "-acodec", profile.audio_codec, "-ab", str(profile.audio_bitrate),
+        "-preset", profile.video_preset,
+        out_filepath
+    ]
 
     proc = subprocess.Popen(transcode_command,
         stdout=subprocess.PIPE,
@@ -59,5 +65,5 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
         segment.file.save(f"{uuid4()}.ts", f)
 
     print(f"Transcoded segment {source_segment.sequence_number} of "
-          f"{distribution.id} at {profile.name}, deleting now")
+          f"{distribution.id} at {profile.name}, locally deleting now")
     os.remove(out_filepath)
