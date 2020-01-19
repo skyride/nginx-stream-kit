@@ -3,7 +3,7 @@
     <ul>
         {% for stream in streams %}
             <li>
-                <a href="{% url 'watch' id=stream.id %}">{{ stream.key }}</a>
+                <a href="{% url 'watch:watch' id=stream.id %}">{{ stream.key }}</a>
             </li>
         {% endfor %}
     </ul>

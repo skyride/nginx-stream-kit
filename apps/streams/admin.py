@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Stream, Distribution, Segment
+from .models import Stream, TranscodeProfile, Distribution, Segment
 
 
 @admin.register(Stream)
@@ -17,6 +17,19 @@ class StreamAdmin(admin.ModelAdmin):
     list_filter = (
         "app",
         "status"
+    )
+
+
+@admin.register(TranscodeProfile)
+class TranscodeProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "video_codec",
+        "video_bitrate",
+        "video_width",
+        "audio_codec",
+        "audio_bitrate",
+        "is_active"
     )
 
 

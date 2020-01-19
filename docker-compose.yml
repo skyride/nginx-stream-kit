@@ -33,7 +33,19 @@ services:
       - .:/app
       - static:/static
       - media:/media
-      - hls:/hls
+    depends_on:
+      - postgres
+      - redis
+
+  celery:
+    build: .
+    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive --ignore-patterns=env/* -- celery worker -A streamkit -B -c 2 -Q transcode,medium
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - static:/static
+      - media:/media
     depends_on:
       - postgres
       - redis
@@ -47,10 +59,16 @@ services:
     image: redis:5.0-alpine
     volumes:
       - redisdata:/data
+  
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
 
 volumes:
   hls:
   pgdata:
   redisdata:
+  rabbitmqdata:
   media:
   static:

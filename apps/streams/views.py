@@ -5,7 +5,7 @@ from rest_framework import mixins, viewsets, pagination
 
 from .serializers import (
     StreamSerializer, DistributionSerializer, SegmentSerializer)
-from .models import Stream, Distribution, Segment
+from .models import Stream, TranscodeProfile, Distribution, Segment
 
 
 class OnPublishStartView(View):
@@ -25,10 +25,17 @@ class OnPublishStartView(View):
             source_ip=request.POST['addr'],
             started=now())
 
-        # Also create a "source" distribution
+        # Create a "source" distribution
         Distribution.objects.create(
             stream=stream,
             name="source")
+
+        # Create transcode distributions
+        for profile in TranscodeProfile.objects.filter(is_active=True):
+            Distribution.objects.create(
+                stream=stream,
+                name=profile.name,
+                transcode_profile=profile)
 
         print(f"Started stream {stream.id} from /{stream.app}/{stream.key}")
         return HttpResponse()

@@ -8,6 +8,27 @@ STREAM_STATUS_CHOICES = [
     ("finished", "Finished")
 ]
 
+VIDEO_PROFILES = [
+    "ultrafast",
+    "superfast",
+    "veryfast",
+    "faster",
+    "fast",
+    "medium",
+    "slow",
+    "slower",
+    "veryslow",
+    "placebo"
+]
+
+VIDEO_CODEC_CHOICES = [
+    ("libx264", "h264"),
+]
+
+AUDIO_CODEC_CHOICES = [
+    ("libfdk_aac", "AAC"),
+]
+
 
 class Stream(models.Model):
     """
@@ -39,6 +60,30 @@ class Stream(models.Model):
         return str(self.id)
 
 
+class TranscodeProfile(models.Model):
+    """
+    A transcode profile for a distribution.
+    """
+    name = models.CharField(max_length=64)
+
+    video_codec = models.CharField(max_length=64, choices=VIDEO_CODEC_CHOICES)
+    video_bitrate = models.IntegerField()
+    video_width = models.IntegerField()
+    video_preset = models.CharField(
+        max_length=32,
+        choices=[(choice, choice.title()) for choice in VIDEO_PROFILES],
+        default="veryfast")
+    audio_codec = models.CharField(max_length=64, choices=AUDIO_CODEC_CHOICES)
+    audio_bitrate = models.IntegerField()
+    is_active = models.BooleanField(default=False)
+
+    created = models.DateTimeField(db_index=True, auto_now_add=True)
+    last_updated = models.DateTimeField(db_index=True, auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Distribution(models.Model):
     """
     A distribution is an encoded version of a stream. E.g. 480p, 240p,
@@ -46,6 +91,11 @@ class Distribution(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid4)
     stream = models.ForeignKey(Stream,
+        related_name="distributions",
+        on_delete=models.CASCADE)
+    transcode_profile = models.ForeignKey(TranscodeProfile,
+        null=True,
+        default=None,
         related_name="distributions",
         on_delete=models.CASCADE)
     name = models.CharField(max_length=64, db_index=True)
@@ -63,6 +113,7 @@ class Distribution(models.Model):
 def generate_segment_filename(instance, filename):
     return f"{instance.distribution_id}/{uuid4()}.ts"
 
+
 class Segment(models.Model):
     """
     A segment is a single video file as part of a distribution.
@@ -72,6 +123,9 @@ class Segment(models.Model):
         on_delete=models.CASCADE)
     sequence_number = models.IntegerField()
     file = models.FileField(upload_to=generate_segment_filename)
+    transcode_command = models.TextField(blank=True)
+    transcode_stdout = models.TextField(blank=True)
+    transcode_stderr = models.TextField(blank=True)
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
