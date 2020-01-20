@@ -123,10 +123,10 @@ CELERYD_PREFETCH_MULTIPLIER = 1
 CELERY_STORE_ERRORS_EVEN_IF_IGNORED = False
 
 from kombu import Exchange, Queue
-CELERY_DEFAULT_QUEUE = "medium"
+CELERY_DEFAULT_QUEUE = "batch"
 CELERY_QUEUES = [
     Queue('transcode', Exchange('transcode'), routing_key="transcode"),
-    Queue('medium', Exchange('medium'), routing_key="medium")
+    Queue('s3ops', Exchange('s3ops'), routing_key="s3ops")
 ]
 
 

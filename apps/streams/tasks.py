@@ -5,6 +5,8 @@ import subprocess
 from uuid import UUID, uuid4
 
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from storages.backends.s3boto3 import S3Boto3Storage
 
 from streamkit.celery import app
 from .models import (
@@ -12,7 +14,7 @@ from .models import (
     generate_segment_filename)
 
 
-@app.task
+@app.task(queue="transcode", ignore_result=True)
 def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
     """
     Transcode the segment provided and add it to the distribution specified.
@@ -67,3 +69,15 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
     print(f"Transcoded segment {source_segment.sequence_number} of "
           f"{distribution.id} at {profile.name}, locally deleting now")
     os.remove(out_filepath)
+
+
+@app.task(queue="s3ops", ignore_result=True)
+def delete_storages_file(path):
+    """
+    Delete a file in our Django-storages S3 object. This method assumes any
+    database references have already been deleted, so it's merely the file
+    we're concerned with.
+    """
+    storage: S3Boto3Storage = default_storage
+    storage.delete(path)
+    print(f"Deleted {path}")
