@@ -36,10 +36,11 @@ services:
     depends_on:
       - postgres
       - redis
+      - rabbitmq
 
-  celery:
+  celery-transcode:
     build: .
-    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive --ignore-patterns=env/* -- celery worker -A streamkit -B -c 2 -Q transcode,medium
+    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive --ignore-patterns=env/* -- celery worker -A streamkit -c 2 -Q transcode
     env_file:
       - .env
     volumes:
@@ -49,6 +50,21 @@ services:
     depends_on:
       - postgres
       - redis
+      - rabbitmq
+
+  celery-batch:
+    build: .
+    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive --ignore-patterns=env/* -- celery worker -A streamkit -B -c 1 -Q batch
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - static:/static
+      - media:/media
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
 
   postgres:
     image: postgres:12-alpine

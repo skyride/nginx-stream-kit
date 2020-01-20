@@ -126,7 +126,7 @@ from kombu import Exchange, Queue
 CELERY_DEFAULT_QUEUE = "medium"
 CELERY_QUEUES = [
     Queue('transcode', Exchange('transcode'), routing_key="transcode"),
-    Queue('medium', Exchange('medium'), routing_key="medium")
+    Queue('batch', Exchange('batch'), routing_key="batch")
 ]
 
 
