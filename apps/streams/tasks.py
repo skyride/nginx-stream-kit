@@ -62,7 +62,6 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
             distribution=distribution,
             sequence_number=source_segment.sequence_number,
             transcode_command=" ".join(transcode_command),
-            transcode_stdout=stdout,
             transcode_stderr=stderr)
         segment.file.save(f"{uuid4()}.ts", f)
 
