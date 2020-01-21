@@ -4,6 +4,7 @@ import os
 from typing import Tuple
 from uuid import uuid4
 
+from .exceptions import TranscodeError
 from .models import TranscodeProfile
 
 
@@ -31,14 +32,18 @@ class MediaWorker(object):
             out_filepath
         ]
 
-        proc = subprocess.Popen(transcode_command,
+        process = subprocess.Popen(transcode_command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
-        stderr = proc.stderr.read().decode("utf-8")
+        process.wait()
+        stderr = process.stderr.read().decode("utf-8")
 
-        # Create segment
-        with open(out_filepath, "rb") as f:
-            file_out_bytes = f.read()
-        os.remove(out_filepath)
+        # Read new file back in and delete
+        try:
+            with open(out_filepath, "rb") as f:
+                file_out_bytes = f.read()
+            os.remove(out_filepath)
+        except FileNotFoundError:
+            raise TranscodeError("FFmpeg returned a non-zero code.\n" + stderr)
 
         return file_out_bytes, stderr
