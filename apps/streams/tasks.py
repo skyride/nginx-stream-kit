@@ -29,17 +29,6 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
 
     # Perform transcode
     out_filepath = f"/tmp/{uuid4()}.ts"
-    cmd = (
-        ffmpeg
-        .input(source_segment.file.url)
-        .filter("scale", profile.video_width, -1)
-        .output(out_filepath,
-            vcodec=profile.video_codec,
-            video_bitrate=profile.video_bitrate,
-            preset=profile.video_preset,
-            acodec=profile.audio_codec,
-            audio_bitrate=profile.audio_bitrate)
-    )
     transcode_command = [
         "ffmpeg", "-copyts",
         "-i", source_segment.file.url,
