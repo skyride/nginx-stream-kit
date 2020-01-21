@@ -46,4 +46,4 @@ class MediaWorker(object):
         except FileNotFoundError:
             raise TranscodeError("FFmpeg returned a non-zero code.\n" + stderr)
 
-        return file_out_bytes, stderr
+        return file_out_bytes, stderr, transcode_command

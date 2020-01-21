@@ -31,7 +31,7 @@ class MediaWorkerTranscodeTests(TestCase):
         profile = self._create_transcode_profile()
 
         # Call method
-        video_out_bytes, stderr = self.media_worker.transcode_segment(
+        video_out_bytes, stderr, command = self.media_worker.transcode_segment(
             self.video_path,
             profile)
 
@@ -40,7 +40,7 @@ class MediaWorkerTranscodeTests(TestCase):
         profile = self._create_transcode_profile(video_codec="libx265")
 
         # Call method
-        video_out_bytes, stderr = self.media_worker.transcode_segment(
+        video_out_bytes, stderr, command = self.media_worker.transcode_segment(
             self.video_path,
             profile)
 
@@ -49,7 +49,7 @@ class MediaWorkerTranscodeTests(TestCase):
         profile = self._create_transcode_profile()
 
         # Call method
-        video_out_bytes, stderr = self.media_worker.transcode_segment(
+        video_out_bytes, stderr, command = self.media_worker.transcode_segment(
             "apps/streams/tests/videos/x265.mp4",
             profile)
 
