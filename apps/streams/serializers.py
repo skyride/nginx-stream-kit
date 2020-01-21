@@ -1,5 +1,10 @@
+import os
+
+from uuid import uuid4
+
 from rest_framework import serializers
 
+from .media import MediaWorker
 from .models import Stream, Distribution, Segment
 from .tasks import transcode_segment
 
@@ -20,15 +25,26 @@ class SegmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Segment
         fields = "__all__"
+        read_only_fields = ["duration"]
 
     def create(self, validated_data) -> Segment:
         """
         Queue our transcode jobs for other distributions.
         """
-        source_distribution: Distribution = validated_data['distribution']
+        # Load into ffmpeg and get metadata
+        tmp_path = f"/tmp/{uuid4()}.ts"
+        with open(tmp_path, "wb") as f:
+            f.write(validated_data['file'].read())
+        media_worker = MediaWorker()
+        stderr = media_worker.get_stderr_output(tmp_path)
+        validated_data['duration'] = (
+            media_worker.parse_duration_from_stderr(stderr))
+        os.remove(tmp_path)
+
         segment: Segment = super().create(validated_data)
         
         # Trigger queued jobs if this is the source distribution
+        source_distribution: Distribution = validated_data['distribution']
         if source_distribution.transcode_profile is None:
             distributions = source_distribution.stream.distributions.exclude(
                 pk=source_distribution.pk).prefetch_related('transcode_profile')

@@ -9,6 +9,7 @@ from django.core.files.storage import default_storage
 from storages.backends.s3boto3 import S3Boto3Storage
 
 from streamkit.celery import app
+from .media import MediaWorker
 from .models import (
     TranscodeProfile, Distribution, Segment,
     generate_segment_filename)
@@ -28,47 +29,25 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
         return None
 
     # Perform transcode
-    out_filepath = f"/tmp/{uuid4()}.ts"
-    cmd = (
-        ffmpeg
-        .input(source_segment.file.url)
-        .filter("scale", profile.video_width, -1)
-        .output(out_filepath,
-            vcodec=profile.video_codec,
-            video_bitrate=profile.video_bitrate,
-            preset=profile.video_preset,
-            acodec=profile.audio_codec,
-            audio_bitrate=profile.audio_bitrate)
-    )
-    transcode_command = [
-        "ffmpeg", "-copyts",
-        "-i", source_segment.file.url,
-        "-vf", f"scale={profile.video_width}:-1",
-        "-vcodec", profile.video_codec, "-vb", str(profile.video_bitrate),
-        "-acodec", profile.audio_codec, "-ab", str(profile.audio_bitrate),
-        "-preset", profile.video_preset,
-        out_filepath
-    ]
+    media_worker = MediaWorker()
+    file_data, stderr, transcode_command = media_worker.transcode_segment(
+        source_segment.file.url,
+        profile)
 
-    proc = subprocess.Popen(transcode_command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-    stdout = proc.stdout.read().decode("utf-8")
-    stderr = proc.stderr.read().decode("utf-8")
+    # Parse metadata from stderr
+    duration = media_worker.parse_duration_from_stderr(stderr)
 
     # Create segment
-    with open(out_filepath, "rb") as f:
-        segment: Segment = Segment(
-            distribution=distribution,
-            sequence_number=source_segment.sequence_number,
-            transcode_command=" ".join(transcode_command),
-            transcode_stdout=stdout,
-            transcode_stderr=stderr)
-        segment.file.save(f"{uuid4()}.ts", f)
+    segment: Segment = Segment(
+        distribution=distribution,
+        sequence_number=source_segment.sequence_number,
+        transcode_command=" ".join(transcode_command),
+        transcode_stderr=stderr,
+        duration=duration)
+    segment.file.save(f"{uuid4()}.ts", ContentFile(file_data))
 
     print(f"Transcoded segment {source_segment.sequence_number} of "
           f"{distribution.id} at {profile.name}, locally deleting now")
-    os.remove(out_filepath)
 
 
 @app.task(queue="s3ops", ignore_result=True)

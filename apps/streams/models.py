@@ -23,6 +23,7 @@ VIDEO_PROFILES = [
 
 VIDEO_CODEC_CHOICES = [
     ("libx264", "h264"),
+    ("libx265", "h265 (HEVC)")
 ]
 
 AUDIO_CODEC_CHOICES = [
@@ -123,8 +124,10 @@ class Segment(models.Model):
         on_delete=models.CASCADE)
     sequence_number = models.IntegerField()
     file = models.FileField(upload_to=generate_segment_filename)
+
+    duration = models.FloatField()
+
     transcode_command = models.TextField(blank=True)
-    transcode_stdout = models.TextField(blank=True)
     transcode_stderr = models.TextField(blank=True)
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
