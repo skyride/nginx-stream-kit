@@ -64,3 +64,28 @@ class MediaWorkerTranscodeTests(TestCase):
                 "audio_bitrate": 48000},
             **kwargs}
         return TranscodeProfile(**kwargs)
+
+
+class MediaWorkerParseTest(TestCase):
+    def setUp(self):
+        root_path = "apps/streams/tests/stderr"
+        with open(f"{root_path}/successful_transcode.txt", "r") as f:
+            self.successful_transcode = f.read()
+
+        from ..media import MediaWorker
+        self.media_worker = MediaWorker()
+
+    def test_valid_duration_parse(self):
+        # Call method
+        duration = self.media_worker.parse_duration_from_stderr(
+            self.successful_transcode)
+
+        # Assertions
+        self.assertEqual(duration, 7328.24)
+
+    def test_no_duration_parse(self):
+        # Call method
+        duration = self.media_worker.parse_duration_from_stderr("")
+
+        # Assertions
+        self.assertIsNone(duration)

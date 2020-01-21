@@ -1,5 +1,6 @@
 import subprocess
 import os
+import re
 
 from typing import Tuple
 from uuid import uuid4
@@ -47,3 +48,24 @@ class MediaWorker(object):
             raise TranscodeError("FFmpeg returned a non-zero code.\n" + stderr)
 
         return file_out_bytes, stderr, transcode_command
+
+    def parse_duration_from_stderr(self, stderr: str) -> float:
+        """
+        Get duration from an ffmpeg stderr dump.
+        """
+        pattern = "Duration: (\\d\\d):(\\d\\d):(\\d\\d\\.\\d\\d)"
+        pattern = re.compile(pattern)
+        result = pattern.search(stderr)
+        if result is None:
+            return None
+        
+        # Parse result
+        hours = float(result.group(1))
+        minutes = float(result.group(2))
+        seconds = float(result.group(3))
+
+        duration = (
+            (hours * 60 * 60) +
+            (minutes * 60) +
+            seconds)
+        return duration

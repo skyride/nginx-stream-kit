@@ -1,0 +1,70 @@
+ffmpeg version N-96422-gfeeef2f Copyright (c) 2000-2020 the FFmpeg developers
+  built with gcc 9.2.0 (Alpine 9.2.0)
+  configuration: --prefix=/ffmpeg_build --pkg-config-flags=--static --extra-cflags=-I/ffmpeg_build/include --extra-ldflags=-L/ffmpeg_build/lib --extra-libs='-lpthread -lm' --bindir=/bin --enable-gpl --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libvpx --enable-libx264 --enable-libx265 --enable-nonfree --enable-openssl
+  libavutil      56. 38.100 / 56. 38.100
+  libavcodec     58. 66.100 / 58. 66.100
+  libavformat    58. 35.103 / 58. 35.103
+  libavdevice    58.  9.103 / 58.  9.103
+  libavfilter     7. 71.100 /  7. 71.100
+  libswscale      5.  6.100 /  5.  6.100
+  libswresample   3.  6.100 /  3.  6.100
+  libpostproc    55.  6.100 / 55.  6.100
+Input #0, mpegts, from 'https://cdn-live-prod.skyride.org/85c19357-9dc3-4d78-85da-b46d64822e3e/82eb50c3-d2e1-4c57-ba3d-b61509d15689.ts':
+  Duration: 02:02:08.24, start: 1065.501333, bitrate: 2843 kb/s
+  Program 1 
+    Stream #0:0[0x100]: Video: h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709, progressive), 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, 50 tbc
+    Stream #0:1[0x101]: Audio: aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, 135 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> h264 (libx264))
+  Stream #0:1 -> #0:1 (aac (native) -> aac (libfdk_aac))
+Press [q] to stop, [?] for help
+[libx264 @ 0x5625a1536200] using SAR=1/1
+[libx264 @ 0x5625a1536200] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 0x5625a1536200] profile High, level 3.0, 4:2:0, 8-bit
+Output #0, mpegts, to '/tmp/aa3dfac5-4438-4234-935d-04fb6228d160.ts':
+  Metadata:
+    encoder         : Lavf58.35.103
+    Stream #0:0: Video: h264 (libx264), yuv420p, 640x360 [SAR 1:1 DAR 16:9], q=-1--1, 1200 kb/s, 25 fps, 90k tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc58.66.100 libx264
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/1200000 buffer size: 0 vbv_delay: N/A
+    Stream #0:1: Audio: aac (libfdk_aac), 48000 Hz, stereo, s16, 60 kb/s
+    Metadata:
+      encoder         : Lavc58.66.100 libfdk_aac
+frame=   22 fps=0.0 q=0.0 size=       0kB time=00:17:46.48 bitrate=   0.0kbits/s speed=2.09e+03x    
+frame=   48 fps= 46 q=28.0 size=      42kB time=00:17:47.52 bitrate=   0.3kbits/s speed=1.02e+03x    
+frame=   59 fps= 37 q=28.0 size=      79kB time=00:17:48.01 bitrate=   0.6kbits/s speed= 669x    
+frame=   69 fps= 33 q=27.0 size=     130kB time=00:17:48.38 bitrate=   1.0kbits/s speed= 509x    
+frame=   82 fps= 31 q=24.0 size=     175kB time=00:17:48.89 bitrate=   1.3kbits/s speed= 403x    
+frame=   91 fps= 29 q=24.0 size=     256kB time=00:17:49.23 bitrate=   2.0kbits/s speed= 337x    
+frame=  101 fps= 27 q=25.0 size=     256kB time=00:17:49.72 bitrate=   2.0kbits/s speed= 291x    
+frame=  112 fps= 26 q=25.0 size=     256kB time=00:17:50.06 bitrate=   2.0kbits/s speed= 251x    
+frame=  123 fps= 26 q=26.0 size=     256kB time=00:17:50.57 bitrate=   2.0kbits/s speed= 225x    
+frame=  133 fps= 25 q=26.0 size=     512kB time=00:17:50.92 bitrate=   3.9kbits/s speed= 202x    
+frame=  144 fps= 24 q=23.0 size=     512kB time=00:17:51.43 bitrate=   3.9kbits/s speed= 182x    
+frame=  158 fps= 25 q=26.0 size=     512kB time=00:17:51.94 bitrate=   3.9kbits/s speed= 167x    
+frame=  170 fps= 24 q=26.0 size=     768kB time=00:17:52.45 bitrate=   5.9kbits/s speed= 154x    
+frame=  183 fps= 24 q=26.0 size=     768kB time=00:17:52.96 bitrate=   5.9kbits/s speed= 143x    
+frame=  195 fps= 24 q=25.0 size=     768kB time=00:17:53.48 bitrate=   5.9kbits/s speed= 134x    
+frame=  201 fps= 21 q=-1.0 Lsize=    1224kB time=00:17:53.69 bitrate=   9.3kbits/s speed= 111x    
+video:1083kB audio:62kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 6.955799%
+[libx264 @ 0x5625a1536200] frame I:3     Avg QP:19.00  size: 40818
+[libx264 @ 0x5625a1536200] frame P:51    Avg QP:20.91  size: 11579
+[libx264 @ 0x5625a1536200] frame B:147   Avg QP:25.75  size:  2694
+[libx264 @ 0x5625a1536200] consecutive B-frames:  2.0%  0.0%  4.5% 93.5%
+[libx264 @ 0x5625a1536200] mb I  I16..4:  1.8% 63.1% 35.1%
+[libx264 @ 0x5625a1536200] mb P  I16..4:  0.5%  7.4%  3.6%  P16..4: 34.6% 25.6% 19.2%  0.0%  0.0%    skip: 9.1%
+[libx264 @ 0x5625a1536200] mb B  I16..4:  0.0%  0.7%  0.5%  B16..8: 40.7% 11.2%  3.7%  direct: 2.4%  skip:40.7%  L0:39.6% L1:42.0% BI:18.5%
+[libx264 @ 0x5625a1536200] final ratefactor: 19.33
+[libx264 @ 0x5625a1536200] 8x8 transform intra:62.5% inter:67.5%
+[libx264 @ 0x5625a1536200] coded y,uvDC,uvAC intra: 80.4% 81.1% 60.5% inter: 19.4% 18.8% 8.1%
+[libx264 @ 0x5625a1536200] i16 v,h,dc,p: 28% 28% 24% 21%
+[libx264 @ 0x5625a1536200] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 20% 12% 19%  7%  9%  9%  8%  9%  8%
+[libx264 @ 0x5625a1536200] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 20% 14% 13%  7% 11% 10%  9%  8%  6%
+[libx264 @ 0x5625a1536200] i8c dc,h,v,p: 54% 18% 22%  6%
+[libx264 @ 0x5625a1536200] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x5625a1536200] ref P L0: 57.1% 15.1% 14.9% 12.9%
+[libx264 @ 0x5625a1536200] ref B L0: 88.5%  8.5%  3.0%
+[libx264 @ 0x5625a1536200] ref B L1: 95.1%  4.9%
+[libx264 @ 0x5625a1536200] kb/s:1103.48

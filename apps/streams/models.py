@@ -124,6 +124,9 @@ class Segment(models.Model):
         on_delete=models.CASCADE)
     sequence_number = models.IntegerField()
     file = models.FileField(upload_to=generate_segment_filename)
+
+    duration = models.FloatField()
+
     transcode_command = models.TextField(blank=True)
     transcode_stderr = models.TextField(blank=True)
 
