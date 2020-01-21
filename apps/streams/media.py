@@ -69,3 +69,10 @@ class MediaWorker(object):
             (minutes * 60) +
             seconds)
         return duration
+
+    def get_stderr_output(self, path: str) -> str:
+        process = subprocess.Popen(["ffmpeg", "-i", path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        process.wait()
+        return process.stderr.read().decode("utf-8")

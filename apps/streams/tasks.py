@@ -35,7 +35,7 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
         profile)
 
     # Parse metadata from stderr
-    duration = worker.parse_duration_from_stderr(stderr)
+    duration = media_worker.parse_duration_from_stderr(stderr)
 
     # Create segment
     segment: Segment = Segment(
