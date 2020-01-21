@@ -29,16 +29,21 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
         return None
 
     # Perform transcode
-    worker = MediaWorker()
-    file_data, stderr, transcode_command = worker.transcode_segment(
+    media_worker = MediaWorker()
+    file_data, stderr, transcode_command = media_worker.transcode_segment(
         source_segment.file.url,
         profile)
 
+    # Parse metadata from stderr
+    duration = worker.parse_duration_from_stderr(stderr)
+
+    # Create segment
     segment: Segment = Segment(
         distribution=distribution,
         sequence_number=source_segment.sequence_number,
         transcode_command=" ".join(transcode_command),
-        transcode_stderr=stderr)
+        transcode_stderr=stderr,
+        duration=duration)
     segment.file.save(f"{uuid4()}.ts", ContentFile(file_data))
 
     print(f"Transcoded segment {source_segment.sequence_number} of "
