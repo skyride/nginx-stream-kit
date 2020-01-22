@@ -26,6 +26,7 @@ class OnPublishStartView(View):
             status="live",
             app=request.POST['app'],
             key=request.POST['name'],
+            name=stream_key.default_stream_name,
             stream_key=stream_key,
             flash_version=request.POST['flashver'],
             swf_url=request.POST['swfurl'],

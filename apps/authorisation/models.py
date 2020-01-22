@@ -13,6 +13,7 @@ class StreamKey(models.Model):
     key = models.CharField(max_length=16,
         default=partial(get_random_string, 16),
         unique=True)
+    default_stream_name = models.CharField(max_length=64, default="")
     user = models.ForeignKey(User,
         null=True,
         related_name="stream_keys",

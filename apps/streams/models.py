@@ -48,6 +48,7 @@ class Stream(models.Model):
         related_name="streams",
         on_delete=models.SET_NULL)
 
+    name = models.CharField(max_length=64, default="", blank=True)
     app = models.CharField(max_length=255, default="")
     flash_version = models.CharField(max_length=255, default="")
     swf_url = models.CharField(max_length=255, default="")

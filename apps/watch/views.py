@@ -34,13 +34,13 @@ class WatchByStreamIdView(WatchView):
             status="live")
 
 
-class WatchByKeyView(WatchView):
+class WatchByNameView(WatchView):
     def _get_stream(self) -> Stream:
         """
-        Attempts to get the stream using the key used on the ingest.
+        Attempts to get the stream using the stream's name.
         """
-        return get_object_or_404(Stream,
-            key=self.kwargs['key'],
+        return get_object_or_404(Stream.objects.exclude(name=""),
+            name=self.kwargs['name'],
             status="live")
 
 
