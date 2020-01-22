@@ -13,10 +13,9 @@ from .media import MediaWorker
 from .models import (
     TranscodeProfile, Distribution, Segment,
     generate_segment_filename)
+    
 
-
-@app.task(queue="transcode", ignore_result=True)
-def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
+def _transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
     """
     Transcode the segment provided and add it to the distribution specified.
     """
@@ -45,9 +44,19 @@ def transcode_segment(segment_id: UUID, distribution_id: UUID) -> UUID:
         transcode_stderr=stderr,
         duration=duration)
     segment.file.save(f"{uuid4()}.ts", ContentFile(file_data))
-
     print(f"Transcoded segment {source_segment.sequence_number} of "
           f"{distribution.id} at {profile.name}, locally deleting now")
+    return segment.pk
+
+
+@app.task(queue="transcode_high", autoretry_on=Exception)
+def transcode_segment_high(segment_id: UUID, distribution_id: UUID) -> UUID:
+    return _transcode_segment(segment_id, distribution_id)
+
+
+@app.task(queue="transcode_low", autoretry_on=Exception)
+def transcode_segment_low(segment_id: UUID, distribution_id: UUID) -> UUID:
+    return _transcode_segment(segment_id, distribution_id)
 
 
 @app.task(queue="s3ops", ignore_result=True)

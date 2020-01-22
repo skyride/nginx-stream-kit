@@ -115,7 +115,7 @@ CACHES = {
 BROKER_URL = f"amqp://{AMQP_HOST}"
 CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}/2"
 CELERY_IGNORE_RESULT = False
-CELERY_TASK_RESULT_EXPIRES = 1200
+CELERY_TASK_RESULT_EXPIRES = 86400
 
 CELERY_DISABLE_RATE_LIMITS = True
 CELERYD_TASK_SOFT_TIME_LIMIT = 300
@@ -125,7 +125,10 @@ CELERY_STORE_ERRORS_EVEN_IF_IGNORED = False
 from kombu import Exchange, Queue
 CELERY_DEFAULT_QUEUE = "batch"
 CELERY_QUEUES = [
-    Queue('transcode', Exchange('transcode'), routing_key="transcode"),
+    Queue('transcode_high', Exchange('transcode_high'),
+        routing_key="transcode_high", queue_arguments={'x-max-priority': 10}),
+    Queue('transcode_low', Exchange('transcode_low'),
+        routing_key="transcode_low", queue_arguments={'x-max-priority': 5}),
     Queue('s3ops', Exchange('s3ops'), routing_key="s3ops")
 ]
 

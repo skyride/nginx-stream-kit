@@ -2,11 +2,12 @@ import os
 
 from uuid import uuid4
 
+from django.core.cache import cache
 from rest_framework import serializers
 
 from .media import MediaWorker
 from .models import Stream, Distribution, Segment
-from .tasks import transcode_segment
+from .tasks import transcode_segment_high
 
 
 class StreamSerializer(serializers.ModelSerializer):
@@ -49,6 +50,6 @@ class SegmentSerializer(serializers.ModelSerializer):
             distributions = source_distribution.stream.distributions.exclude(
                 pk=source_distribution.pk).prefetch_related('transcode_profile')
             for distribution in distributions:
-                transcode_segment.delay(segment.pk, distribution.pk)
+                transcode_segment_high.delay(segment.pk, distribution.pk)
 
         return segment
