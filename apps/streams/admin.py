@@ -11,8 +11,9 @@ class StreamAdmin(admin.ModelAdmin):
         "__str__",
         "status",
         "key",
-        "source_ip",
         "no_of_segments",
+        "size",
+        "source_ip",
         "started",
         "stopped"
     )
@@ -23,10 +24,14 @@ class StreamAdmin(admin.ModelAdmin):
     def no_of_segments(self, instance: Distribution):
         return instance.segments_count
 
+    def size(self, instance: Distribution):
+        return filesize(instance.size)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.annotate(
-            segments_count=Count("distributions__segments"))
+            segments_count=Count("distributions__segments"),
+            size=Sum("distributions__segments__file_size"))
 
 
 @admin.register(TranscodeProfile)
@@ -48,6 +53,7 @@ class DistributionAdmin(admin.ModelAdmin):
         "__str__",
         "no_of_segments",
         "duration",
+        "size",
         "transcode_profile",
         "stream",
         "created",
@@ -63,11 +69,15 @@ class DistributionAdmin(admin.ModelAdmin):
         if instance.duration is not None:
             return '{:.2f}'.format(instance.duration)
 
+    def size(self, instance: Distribution):
+        return filesize(instance.size)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.annotate(
             segments_count=Count("segments"),
-            duration=Sum("segments__duration"))
+            duration=Sum("segments__duration"),
+            size=Sum("segments__file_size"))
 
 
 @admin.register(Segment)
