@@ -3,6 +3,8 @@ from uuid import uuid4
 from django.db import models
 from sizefield.models import FileSizeField
 
+from apps.authorisation.models import StreamKey
+
 
 STREAM_STATUS_CHOICES = [
     ("live", "Live"),
@@ -77,13 +79,16 @@ class TranscodeProfile(models.Model):
         default="veryfast")
     audio_codec = models.CharField(max_length=64, choices=AUDIO_CODEC_CHOICES)
     audio_bitrate = models.IntegerField()
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
 
     def __str__(self):
-        return self.name
+        if self.is_active:
+            return self.name
+        else:
+            return f"{self.name} (INACTIVE)"
 
 
 class Distribution(models.Model):

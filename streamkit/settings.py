@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
 
+    'apps.authorisation',
     'apps.streams',
     'apps.playlists',
     'apps.watch'

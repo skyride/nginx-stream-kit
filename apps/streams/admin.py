@@ -21,10 +21,10 @@ class StreamAdmin(admin.ModelAdmin):
         "status",
     )
 
-    def no_of_segments(self, instance: Distribution):
+    def no_of_segments(self, instance: Stream):
         return instance.segments_count
 
-    def size(self, instance: Distribution):
+    def size(self, instance: Stream):
         return filesize(instance.size)
 
     def get_queryset(self, request):
@@ -38,13 +38,13 @@ class StreamAdmin(admin.ModelAdmin):
 class TranscodeProfileAdmin(admin.ModelAdmin):
     list_display = (
         "name",
+        "is_active",
         "no_of_distributions",
         "video_codec",
         "video_bitrate",
         "video_width",
         "audio_codec",
-        "audio_bitrate",
-        "is_active"
+        "audio_bitrate"
     )
 
     def no_of_distributions(self, instance: TranscodeProfile):
