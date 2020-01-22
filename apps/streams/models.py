@@ -58,7 +58,7 @@ class Stream(models.Model):
         ordering = ["created"]
 
     def __str__(self):
-        return str(self.id)
+        return str(self.id)[:8] + "/" + self.key
 
 
 class TranscodeProfile(models.Model):
@@ -108,7 +108,7 @@ class Distribution(models.Model):
         unique_together = ("stream", "name")
 
     def __str__(self):
-        return f"{self.stream}/{self.stream.key}: {self.name}"
+        return f"{self.stream}@{self.name}"
 
 
 def generate_segment_filename(instance, filename):
@@ -137,4 +137,4 @@ class Segment(models.Model):
         unique_together = ("distribution", "sequence_number")
 
     def __str__(self):
-        return str(self.file)
+        return f"{self.distribution}:{self.sequence_number}"
