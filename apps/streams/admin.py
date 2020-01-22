@@ -38,6 +38,7 @@ class StreamAdmin(admin.ModelAdmin):
 class TranscodeProfileAdmin(admin.ModelAdmin):
     list_display = (
         "name",
+        "no_of_distributions",
         "video_codec",
         "video_bitrate",
         "video_width",
@@ -45,6 +46,14 @@ class TranscodeProfileAdmin(admin.ModelAdmin):
         "audio_bitrate",
         "is_active"
     )
+
+    def no_of_distributions(self, instance: TranscodeProfile):
+        return instance.distributions_count
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.annotate(
+            distributions_count=Count("distributions"))
 
 
 @admin.register(Distribution)
