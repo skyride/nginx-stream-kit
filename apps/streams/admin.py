@@ -17,9 +17,8 @@ class StreamAdmin(admin.ModelAdmin):
         "started",
         "stopped"
     )
-    list_filter = (
-        "status",
-    )
+    list_filter = ("status", )
+    ordering = ("-started", )
 
     def no_of_segments(self, instance: Stream):
         return instance.segments_count
@@ -46,6 +45,7 @@ class TranscodeProfileAdmin(admin.ModelAdmin):
         "audio_codec",
         "audio_bitrate"
     )
+    ordering = ("-is_active", "name")
 
     def no_of_distributions(self, instance: TranscodeProfile):
         return instance.distributions_count
@@ -70,6 +70,7 @@ class DistributionAdmin(admin.ModelAdmin):
     list_filter = (
         "transcode_profile",
     )
+    ordering = ("-created", )
 
     def no_of_segments(self, instance: Distribution):
         return instance.segments_count
@@ -99,6 +100,7 @@ class SegmentAdmin(admin.ModelAdmin):
         "filesize",
         "created"
     )
+    ordering = ("-created", )
 
     def filesize(self, instance: Segment):
         return filesize(instance.file_size)

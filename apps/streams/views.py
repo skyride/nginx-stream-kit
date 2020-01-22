@@ -1,7 +1,13 @@
+from typing import Iterable
+
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets, pagination
+
+from apps.authorisation.models import StreamKey
 
 from .serializers import (
     StreamSerializer, DistributionSerializer, SegmentSerializer)
@@ -13,10 +19,14 @@ class OnPublishStartView(View):
         """
         Triggered by nginx-rtmp when a stream starts.
         """
+        key = request.POST['name']
+        stream_key = self._authorise_key(key)
+
         stream: Stream = Stream.objects.create(
             status="live",
             app=request.POST['app'],
             key=request.POST['name'],
+            stream_key=stream_key,
             flash_version=request.POST['flashver'],
             swf_url=request.POST['swfurl'],
             tcurl=request.POST['tcurl'],
@@ -31,14 +41,36 @@ class OnPublishStartView(View):
             name="source")
 
         # Create transcode distributions
-        for profile in TranscodeProfile.objects.filter(is_active=True):
+        for transcode_profile in self._get_distributions(stream_key):
             Distribution.objects.create(
                 stream=stream,
-                name=profile.name,
-                transcode_profile=profile)
+                name=transcode_profile.name,
+                transcode_profile=transcode_profile)
 
         print(f"Started stream {stream.id} from /{stream.app}/{stream.key}")
         return HttpResponse()
+
+    def _authorise_key(self, key: str) -> StreamKey:
+        """
+        Check the key is valid and return the StreamKey object, otherwise
+        raise a 4xx error.
+        """
+        stream_key = get_object_or_404(StreamKey,
+            key=key,
+            is_active=True)
+
+        # Check no other streams are live
+        if stream_key.streams.filter(status="live").count() > 0:
+            raise PermissionDenied("A stream is already live with this key.")
+
+        return stream_key
+
+    def _get_distributions(self,
+                           stream_key: StreamKey) -> Iterable[TranscodeProfile]:
+        """
+        Returns a queryset of transcode profiles for the stream key.
+        """
+        return stream_key.transcode_profiles.filter(is_active=True)
 
 
 class OnPublishDoneView(View):
