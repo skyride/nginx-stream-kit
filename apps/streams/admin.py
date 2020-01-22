@@ -10,7 +10,7 @@ class StreamAdmin(admin.ModelAdmin):
     list_display = (
         "__str__",
         "status",
-        "key",
+        "stream_key",
         "no_of_segments",
         "size",
         "source_ip",

@@ -42,17 +42,24 @@ class Stream(models.Model):
 
     status = models.CharField(max_length=32, choices=STREAM_STATUS_CHOICES)
     key = models.CharField(max_length=128, db_index=True)
+    stream_key = models.ForeignKey(StreamKey,
+        null=True,
+        blank=True,
+        related_name="streams",
+        on_delete=models.SET_NULL)
 
     app = models.CharField(max_length=255, default="")
     flash_version = models.CharField(max_length=255, default="")
     swf_url = models.CharField(max_length=255, default="")
     tcurl = models.CharField(max_length=255, default="")
-    page_url = models.CharField(max_length=255, default="")
+    page_url = models.CharField(max_length=255, blank=True, default="")
     client_id = models.IntegerField(default=0)
     source_ip = models.CharField(max_length=255, default="")
 
-    started = models.DateTimeField(db_index=True, null=True, default=None)
-    stopped = models.DateTimeField(db_index=True, null=True, default=None)
+    started = models.DateTimeField(
+        db_index=True, null=True, blank=True, default=None)
+    stopped = models.DateTimeField(
+        db_index=True, null=True, blank=True, default=None)
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
