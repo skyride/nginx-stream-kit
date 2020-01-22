@@ -3,3 +3,9 @@ version: "3.0"
 services:
   web:
     command: gunicorn -w 4 -b 0.0.0.0:8000 streamkit.wsgi:application
+
+  celery-transcode:
+    command: celery worker -A streamkit -c 2 -Q transcode_high,transcode_low,s3ops
+
+  celery-batch:
+    command: celery worker -A streamkit -Q s3ops -c 1
