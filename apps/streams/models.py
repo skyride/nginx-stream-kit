@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from django.db import models
+from sizefield.models import FileSizeField
 
 
 STREAM_STATUS_CHOICES = [
@@ -124,6 +125,7 @@ class Segment(models.Model):
         on_delete=models.CASCADE)
     sequence_number = models.IntegerField()
     file = models.FileField(upload_to=generate_segment_filename)
+    file_size = FileSizeField()
 
     duration = models.FloatField()
 

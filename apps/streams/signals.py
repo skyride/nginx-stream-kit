@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, pre_save, post_save
 from django.dispatch import receiver
 
 from .models import Stream, Distribution, Segment
@@ -19,6 +19,14 @@ def delete_segment_file(sender, instance: Segment, using, **kwargs):
     delete_storages_file.delay(instance.file.name)
 
 
+@receiver(pre_save, sender=Segment)
+def populate_file_size(sender, instance: Segment, raw, **kwargs):
+    """
+    Populate the file_size filed with the actual filesize of file.
+    """
+    instance.file_size = instance.file.size
+
+
 @receiver(post_delete, sender=Distribution)
 def delete_distribution_folder(sender, instance: Distribution, using, **kwargs):
     """
@@ -30,7 +38,7 @@ def delete_distribution_folder(sender, instance: Distribution, using, **kwargs):
 @receiver(post_save, sender=Distribution)
 def backfill_segments(sender,
                       instance: Distribution,
-                    created: bool,
+                      created: bool,
                       raw: bool,
                       **kwargs):
     """

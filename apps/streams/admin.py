@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import Count, Sum, Func
+from sizefield.templatetags.sizefieldtags import filesize
 
 from .models import Stream, TranscodeProfile, Distribution, Segment
 
@@ -76,5 +77,9 @@ class SegmentAdmin(admin.ModelAdmin):
         "distribution",
         "sequence_number",
         "duration",
+        "filesize",
         "created"
     )
+
+    def filesize(self, instance: Segment):
+        return filesize(instance.file_size)
