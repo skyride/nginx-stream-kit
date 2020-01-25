@@ -8,10 +8,16 @@ class WatchView(TemplateView):
     template_name = "watch/watch.html"
 
     def get_context_data(self, **kwargs):
+        """
+        Get the stream and then an associated distribution for the stream.
+        """
         stream = self._get_stream()
+        distribution: Distribution = get_object_or_404(stream.distributions,
+            name=self.kwargs.get("distribution_name", "source"))
 
         context = super().get_context_data(**kwargs)
         context['stream'] = stream
+        context['distribution'] = distribution
         return context
 
     def _get_stream(self) -> Stream:
