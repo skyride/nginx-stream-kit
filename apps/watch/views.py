@@ -30,8 +30,7 @@ class WatchByStreamIdView(WatchView):
         the URL pattern.
         """
         return get_object_or_404(Stream,
-            id=self.kwargs['id'],
-            status="live")
+            id=self.kwargs['id'])
 
 
 class WatchByNameView(WatchView):
@@ -40,8 +39,7 @@ class WatchByNameView(WatchView):
         Attempts to get the stream using the stream's name.
         """
         return get_object_or_404(Stream.objects.exclude(name=""),
-            name=self.kwargs['name'],
-            status="live")
+            name=self.kwargs['name'])
 
 
 class LiveStreamListView(TemplateView):
@@ -52,5 +50,8 @@ class LiveStreamListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['streams'] = Stream.objects.filter(status="live")
+        context['live'] = Stream.objects.filter(status="live")
+        context['vods'] = (Stream.objects
+                .filter(status="finished")
+                .order_by("-stopped"))
         return context

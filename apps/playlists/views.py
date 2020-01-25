@@ -6,21 +6,40 @@ from apps.streams.models import Distribution, Segment
 
 
 class DistributionPlaylistView(View):
-    template = "playlists/distribution.m3u8"
+    """
+    Generates m3u8 playlist files for a distribution.
+    """
 
     def get(self, request, distribution_id):
-        """
-        Return a live m3u8 file for this distribution.
-        """
         distribution: Distribution = get_object_or_404(Distribution,
-            id=distribution_id,
-            stream__status="live")
+            id=distribution_id)
 
+        # Handle live/finished status
+        if distribution.stream.status == "live":
+            return self._do_live(request, distribution)
+        else:
+            return self._do_vod(request, distribution)
+
+    def _do_live(self, request, distribution: Distribution):
+        """
+        Generate and return a live playlist.
+        """
         segments = distribution.segments.order_by('-sequence_number')[:6]
         segments = list(reversed(segments))
+
         context = {'segments': segments}
 
         return HttpResponse(
-            content=render(request, self.template, context),
-            content_type="application/x-mpegURL"
-            )
+            content=render(request, "playlists/live.m3u8", context),
+            content_type="application/x-mpegURL")
+
+    def _do_vod(self, request, distribution: Distribution):
+        """
+        Generate and return a vod playlist.
+        """
+        context = {
+            'segments': distribution.segments.order_by('sequence_number')}
+
+        return HttpResponse(
+            content=render(request, "playlists/vod.m3u8", context),
+            content_type="application/x-mpegURL")

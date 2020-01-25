@@ -1,7 +1,8 @@
 {% autoescape off %}#EXTM3U
-#EXT-X-VERSION:3
+#EXT-X-PLAYLIST-TYPE:VOD
+#EXT-X-TARGETDURATION:10
+#EXT-X-VERSION:4
 #EXT-X-MEDIA-SEQUENCE:{{ segments.0.sequence_number }}
-#EXT-X-TARGETDURATION:8
 {% for segment in segments %}#EXTINF:{{ segment.duration }},
 {{ segment.file.url }}
 {% endfor %}

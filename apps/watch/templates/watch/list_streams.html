@@ -1,9 +1,16 @@
 
 <div>
     <ul>
-        {% for stream in streams %}
+        <h2>Live</h2>
+        {% for stream in live %}
             <li>
                 <a href="{% url 'watch:watch' id=stream.id %}">{{ stream.name }}</a>
+            </li>
+        {% endfor %}
+
+        {% for stream in vods %}
+            <li>
+                <a href="{% url 'watch:watch' id=stream.id %}">{{ stream.name|default:stream.key }}</a>
             </li>
         {% endfor %}
     </ul>
