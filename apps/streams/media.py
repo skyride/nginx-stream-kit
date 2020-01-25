@@ -27,9 +27,9 @@ class MediaWorker(object):
             "ffmpeg",
             "-i", in_path,
             "-vf", f"scale={profile.video_width}:-1",
-            "-vcodec", profile.video_codec, "-vb", str(profile.video_bitrate),
+            *profile.get_video_transcode_parameters(),
             "-bsf:v", "h264_mp4toannexb",
-            "-acodec", profile.audio_codec, "-ab", str(profile.audio_bitrate),
+            *profile.get_audio_transcode_parameters(),
             "-copyts", "-muxdelay", "0",
             "-preset", profile.video_preset,
             out_filepath

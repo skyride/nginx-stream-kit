@@ -31,6 +31,7 @@ VIDEO_CODEC_CHOICES = [
 
 AUDIO_CODEC_CHOICES = [
     ("libfdk_aac", "AAC"),
+    ("copy", "Copy")
 ]
 
 
@@ -108,6 +109,18 @@ class TranscodeProfile(models.Model):
             bitrate += self.audio_bitrate
 
         return bitrate or None
+
+    def get_video_transcode_parameters(self):
+        if self.video_codec == "copy":
+            return "-vcodec", "copy"
+        else:
+            return "-vcodec", self.video_codec, "-vb", str(self.video_bitrate)
+
+    def get_audio_transcode_parameters(self):
+        if self.audio_codec == "copy":
+            return "-acodec", "copy"
+        else:
+            return "-acodec", self.audio_codec, "-ab", str(self.audio_bitrate)
 
 
 class Distribution(models.Model):
