@@ -98,6 +98,17 @@ class TranscodeProfile(models.Model):
         else:
             return f"{self.name} (INACTIVE)"
 
+    @property
+    def total_bitrate(self):
+        bitrate = 0
+        if self.video_bitrate is not None:
+            bitrate += self.video_bitrate
+        
+        if self.audio_bitrate is not None:
+            bitrate += self.audio_bitrate
+
+        return bitrate or None
+
 
 class Distribution(models.Model):
     """

@@ -2,7 +2,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 
-from apps.streams.models import Distribution, Segment
+from apps.streams.models import Stream, Distribution, Segment
 
 
 class DistributionPlaylistView(View):
@@ -42,4 +42,20 @@ class DistributionPlaylistView(View):
 
         return HttpResponse(
             content=render(request, "playlists/vod.m3u8", context),
+            content_type="application/x-mpegURL")
+
+
+class StreamPlaylistView(View):
+    """
+    Generates m3u8 playlist files for a stream.
+    """
+    def get(self, request, stream_id):
+        stream: Stream = get_object_or_404(Stream,
+            id=stream_id)
+
+        context = {'distributions':
+            stream.distributions.select_related("transcode_profile")}
+
+        return HttpResponse(
+            content=render(request, "playlists/variants.m3u8", context),
             content_type="application/x-mpegURL")

@@ -8,6 +8,7 @@
             </li>
         {% endfor %}
 
+        <h2>VODs</h2>
         {% for stream in vods %}
             <li>
                 <a href="{% url 'watch:watch' id=stream.id %}">{{ stream.name|default:stream.key }}</a>

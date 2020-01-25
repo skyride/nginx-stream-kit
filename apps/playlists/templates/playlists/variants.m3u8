@@ -1,0 +1,10 @@
+#EXTM3U
+{% for distribution in distributions %}
+    {% if distribution.transcode_profile %}
+        #EXT-X-STREAM-INF:PROGRAM-ID=1, BANDWIDTH={{ distribution.transcode_profile.total_bitrate }}
+        {% url 'playlists:distributions' distribution.id %}
+    {% else %}
+        #EXT-X-STREAM-INF:PROGRAM-ID=1, BANDWIDTH=3000000
+        {% url 'playlists:distributions' distribution.id %}
+    {% endif %}
+{% endfor %}
