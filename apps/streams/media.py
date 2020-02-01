@@ -58,7 +58,7 @@ class MediaWorker(object):
         Takes a video file path and generates a png image of the first
         frame along with the stderr output.
         """
-        out_filepath = f"/tmp/{uuid4()}.png"
+        out_filepath = f"/tmp/{uuid4()}.jpg"
         command = [
             "ffmpeg",
             "-i", in_path,

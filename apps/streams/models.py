@@ -179,7 +179,7 @@ class Segment(models.Model):
 
 
 def generate_still_filename(instance, filename):
-    return f"stills/{instance.stream_id}/{uuid4()}.png"
+    return f"stills/{instance.stream_id}/{filename}"
 
 class Still(models.Model):
     """

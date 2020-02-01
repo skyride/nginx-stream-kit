@@ -76,7 +76,7 @@ def _generate_still_from_segment(segment_id: UUID) -> UUID:
     still: Still = Still(
         stream_id=segment.distribution.stream_id,
         timecode=timecode)
-    still.file.save(f"{uuid4()}.ts", ContentFile(file_data))
+    still.file.save(f"{uuid4()}.jpg", ContentFile(file_data))
     print(f"Generated still from segment {segment.sequence_number} of "
           f"{segment.distribution_id}")
     return still.pk
