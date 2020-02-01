@@ -29,9 +29,6 @@ COPY uploader.py /app/uploader.py
 
 # Configure System
 RUN apk add ncurses bash htop
-COPY .bashrc /tmp/.bashrc
-RUN cat /tmp/.bashrc >> /root/.bashrc
-
 COPY nginx.conf /etc/nginx/
 RUN ln -s /usr/local/nginx/sbin/nginx /bin/nginx
 

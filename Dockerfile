@@ -41,13 +41,9 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
 WORKDIR /app
 
 # Python requirements
-RUN apk add --no-cache postgresql-dev
+RUN apk add --no-cache postgresql-dev jpeg-dev
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
-
-# .bashrc
-COPY .bashrc /tmp/.bashrc
-RUN cat /tmp/.bashrc >> /root/.bashrc
 
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=streamkit.settings
