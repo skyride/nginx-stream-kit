@@ -152,7 +152,6 @@ class Distribution(models.Model):
 def generate_segment_filename(instance, filename):
     return f"{instance.distribution_id}/{uuid4()}.ts"
 
-
 class Segment(models.Model):
     """
     A segment is a single video file as part of a distribution.
@@ -177,3 +176,24 @@ class Segment(models.Model):
 
     def __str__(self):
         return f"{self.distribution}:{self.sequence_number}"
+
+
+def generate_still_filename(instance, filename):
+    return f"{instance.distribution_id}/{uuid4()}.png"
+
+class Still(models.Model):
+    """
+    A still is a single frame (likely the first frame) from the associated
+    segment as a png.
+    """
+    segment = models.ForeignKey(Segment,
+        related_name="stills",
+        on_delete=models.CASCADE)
+
+    file = models.ImageField(upload_to=generate_still_filename)
+
+    created = models.DateTimeField(db_index=True, auto_now_add=True)
+    last_updated = models.DateTimeField(db_index=True, auto_now=True)
+
+    def __str__(self):
+        return f"{self.segment}:still_{self.pk}"
