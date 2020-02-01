@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'apps.authorisation',
     'apps.streams',
     'apps.playlists',
-    'apps.watch'
+    'apps.watch',
+    'apps.frontend_api'
 ]
 
 MIDDLEWARE = [
