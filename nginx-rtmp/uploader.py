@@ -10,7 +10,7 @@ for new .ts files appearing and upload them back to the main django application
 where they can be processed and stored in our S3 backend.
 """
 
-API_URL = "http://web:8000/api"
+API_URL = "http://web:8000/internal-api"
 STREAM_KEY = sys.argv[1]
 HLS_ROOT = "/hls"
 HLS_DIRECTORY = f"{HLS_ROOT}/{STREAM_KEY}"

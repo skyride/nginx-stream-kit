@@ -12,7 +12,7 @@ router.register(r"segments", views.SegmentViewSet)
 
 app_name = "streams"
 urlpatterns = [
-    re_path(r"api/", include(router.urls)),
+    re_path(r"internal-api/", include(router.urls)),
     path("nginx-callbacks/publish-start", views.OnPublishStartView.as_view()),
     path("nginx-callbacks/publish-done", views.OnPublishDoneView.as_view())
 ]
