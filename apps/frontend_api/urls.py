@@ -5,9 +5,9 @@ from . import views
 
 
 router = DefaultRouter()
+router.register(r"streams", views.StreamViewSet)
 
 
-app_name = "frontend_api"
 urlpatterns = [
     path("", include(router.urls)),
 ]
