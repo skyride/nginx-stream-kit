@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import Count, Sum, Func
 from sizefield.templatetags.sizefieldtags import filesize
 
-from .models import Stream, TranscodeProfile, Distribution, Segment
+from .models import Stream, TranscodeProfile, Distribution, Segment, Still
 
 
 @admin.register(Stream)
@@ -103,4 +103,20 @@ class SegmentAdmin(admin.ModelAdmin):
     ordering = ("-created", )
 
     def filesize(self, instance: Segment):
+        return filesize(instance.file_size)
+
+
+@admin.register(Still)
+class StillAdmin(admin.ModelAdmin):
+    list_display = (
+        "__str__",
+        "stream",
+        "timecode",
+        "filesize",
+        "created"
+    )
+
+    ordering = ("-created", )
+
+    def filesize(self, instance: Still):
         return filesize(instance.file_size)

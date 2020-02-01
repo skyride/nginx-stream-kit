@@ -179,21 +179,23 @@ class Segment(models.Model):
 
 
 def generate_still_filename(instance, filename):
-    return f"{instance.distribution_id}/{uuid4()}.png"
+    return f"stills/{instance.stream_id}/{uuid4()}.png"
 
 class Still(models.Model):
     """
-    A still is a single frame (likely the first frame) from the associated
-    segment as a png.
+    A still is a single frame (likely the first frame) from a segment, attached
+    to the stream object.
     """
-    segment = models.ForeignKey(Segment,
+    stream = models.ForeignKey(Stream,
         related_name="stills",
         on_delete=models.CASCADE)
+    timecode = models.FloatField(db_index=True)
 
     file = models.ImageField(upload_to=generate_still_filename)
+    file_size = FileSizeField()
 
     created = models.DateTimeField(db_index=True, auto_now_add=True)
     last_updated = models.DateTimeField(db_index=True, auto_now=True)
 
     def __str__(self):
-        return f"{self.segment}:still_{self.pk}"
+        return f"{self.stream}:still@{self.timecode}"

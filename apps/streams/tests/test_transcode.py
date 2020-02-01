@@ -66,6 +66,30 @@ class MediaWorkerTranscodeTests(TestCase):
         return TranscodeProfile(**kwargs)
 
 
+class MediaWorkerStillGeneration(TestCase):
+    video_path = "apps/streams/tests/videos/segment.ts"
+
+    def setUp(self):
+        from ..media import MediaWorker
+        self.media_worker = MediaWorker()
+
+    def test_exception_raised_on_non_existant_file(self):
+        # Call method
+        from ..exceptions import TranscodeError
+        self.assertRaises(TranscodeError,
+            self.media_worker.generate_still_from_video,
+            f"/tmp/{uuid4()}.ts")
+
+    def test_valid_generation(self):
+        # Call method
+        image_out_bytes, timecode, stderr = \
+            self.media_worker.generate_still_from_video(
+                self.video_path)
+        
+        # Assertions
+        self.assertGreater(len(image_out_bytes), 0)
+        self.assertEqual(46.904044, timecode)
+
 class MediaWorkerParseTest(TestCase):
     def setUp(self):
         root_path = "apps/streams/tests/stderr"
@@ -89,3 +113,18 @@ class MediaWorkerParseTest(TestCase):
 
         # Assertions
         self.assertIsNone(duration)
+
+    def test_valid_start_parse(self):
+        # Call method
+        timecode = self.media_worker.parse_start_timecode_from_stderr(
+            self.successful_transcode)
+
+        # Assertions
+        self.assertEqual(timecode, 1065.501333)
+    
+    def test_no_start_parse(self):
+        # Call method
+        timecode = self.media_worker.parse_start_timecode_from_stderr("")
+
+        # Assertions
+        self.assertIsNone(timecode)

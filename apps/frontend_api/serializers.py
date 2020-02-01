@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import serializers
 
-from apps.streams.models import Stream, Distribution
+from apps.streams.models import Stream, Distribution, Still
 
 
 class BaseSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,6 +30,7 @@ class StreamDistributionSerializer(serializers.ModelSerializer):
 class StreamSerializer(BaseSerializer):
     distributions = StreamDistributionSerializer(many=True)
     playlist_url = serializers.SerializerMethodField()
+    still_url = serializers.SerializerMethodField()
 
     def get_playlist_url(self, instance: Stream):
         """
@@ -38,8 +39,19 @@ class StreamSerializer(BaseSerializer):
         return reverse("playlists:stream", kwargs={
             "stream_id": instance.pk})
 
+    def get_still_url(self, instance: Stream):
+        """
+        Returns the URL of the latest still.
+        """
+        try:
+            still = instance.stills.latest("timecode")
+            if still is not None:
+                return still.file.url
+        except Still.DoesNotExist:
+            return None
+
     class Meta:
         model = Stream
         fields = (
             "id", "url", "status", "distributions", "name", "started",
-            "stopped", "playlist_url")
+            "stopped", "playlist_url", "still_url")

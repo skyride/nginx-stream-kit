@@ -3,9 +3,11 @@ from typing import Iterable
 from django.db.models.signals import post_delete, pre_save, post_save
 from django.dispatch import receiver
 
-from .models import Stream, Distribution, Segment
+from .models import Stream, Distribution, Segment, Still
 from .tasks import (
-    transcode_segment_high, transcode_segment_low, delete_storages_file)
+    transcode_segment_high, transcode_segment_low,
+    generate_still_from_segment_high, generate_still_from_segment_low,
+    delete_storages_file)
 
 
 @receiver(post_delete, sender=Segment)
@@ -20,9 +22,10 @@ def delete_segment_file(sender, instance: Segment, using, **kwargs):
 
 
 @receiver(pre_save, sender=Segment)
-def populate_file_size(sender, instance: Segment, raw, **kwargs):
+@receiver(pre_save, sender=Still)
+def populate_file_size(sender, instance, raw, **kwargs):
     """
-    Populate the file_size filed with the actual filesize of file.
+    Populate the file_size field with the actual filesize of file.
     """
     instance.file_size = instance.file.size
 
@@ -66,3 +69,25 @@ def backfill_segments(sender,
             for segment in segments:
                 transcode_segment_low.apply_async(
                     countdown=5, args=(segment.pk, instance.pk))
+
+
+@receiver(post_save, sender=Segment)
+def generate_still(sender,
+                   instance: Segment,
+                   created: bool,
+                   raw: bool,
+                   **kwargs):
+    """
+    Trigger the generation of a still on every 5th segment from source.
+    """
+    if not raw and created:
+        if instance.sequence_number % 5 == 0:
+            distribution: Distribution = instance.distribution
+            if distribution.transcode_profile_id is None:
+                # Generate still, but base priority on whether its live
+                if distribution.stream.status == "live":
+                    generate_still_method = generate_still_from_segment_high
+                else:
+                    generate_still_method = generate_still_from_segment_low
+                generate_still_method.apply_async(
+                    countdown=5, args=(instance.pk, ))

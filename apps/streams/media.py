@@ -16,9 +16,9 @@ class MediaWorker(object):
     def transcode_segment(self,
                           in_path: str,
                           profile: TranscodeProfile
-                          ) -> Tuple[bytes, str]:
+                          ) -> Tuple[bytes, str, str]:
         """
-        Takes video file byte and a transcode profile, transcode the file,
+        Takes video file path and a transcode profile, transcode the file,
         and returns the transcoded file in bytes, along with ffmpeg's stderr
         output.
         """
@@ -50,6 +50,54 @@ class MediaWorker(object):
             raise TranscodeError("FFmpeg returned a non-zero code.\n" + stderr)
 
         return file_out_bytes, stderr, transcode_command
+
+    def generate_still_from_video(self,
+                                    in_path: str
+                                    ) -> Tuple[bytes, float, str]:
+        """
+        Takes a video file path and generates a png image of the first
+        frame along with the stderr output.
+        """
+        out_filepath = f"/tmp/{uuid4()}.png"
+        command = [
+            "ffmpeg",
+            "-i", in_path,
+            "-vframes", "1",
+            out_filepath
+        ]
+
+        process = subprocess.Popen(command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        process.wait()
+        stderr = process.stderr.read().decode("utf-8")
+
+        # Parse start timecode
+        timecode = self.parse_start_timecode_from_stderr(stderr)
+
+        # Read new file back in and delete
+        try:
+            with open(out_filepath, "rb") as f:
+                file_out_bytes = f.read()
+            os.remove(out_filepath)
+        except FileNotFoundError:
+            raise TranscodeError("FFmpeg returned a non-zero code.\n" + stderr)
+
+        return file_out_bytes, timecode, stderr
+
+    def parse_start_timecode_from_stderr(self, stderr: str) -> float:
+        """
+        Get start from an stderr dump.
+        """
+        pattern = "start: ([0-9]+\.[0-9]+)"
+        pattern = re.compile(pattern)
+        result = pattern.search(stderr)
+        if result is None:
+            return None
+
+        # Parse result
+        timecode = float(result.group(1))
+        return timecode
 
     def parse_duration_from_stderr(self, stderr: str) -> float:
         """
