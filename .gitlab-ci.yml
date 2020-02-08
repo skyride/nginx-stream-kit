@@ -15,29 +15,9 @@ Build Django App:
     - docker
   services:
     - docker:19.03.4-dind
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
-    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-    - docker build -t skyride/nginx-stream-kit-django:${CI_COMMIT_SHA} -t skyride/nginx-stream-kit-django:latest .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t docker build -t $IMAGE_TAG .
     - docker push skyride/nginx-stream-kit-django:${CI_COMMIT_SHA}
-
-Build Nginx:
-    stage: build
-    tags:
-        - docker
-    services:
-        - docker:19.03.4-dind
-    script:
-        - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-        - docker build -t skyride/nginx-stream-kit-nginx:${CI_COMMIT_SHA} -t skyride/nginx-stream-kit-nginx:latest nginx/
-        - docker push skyride/nginx-stream-kit-nginx:${CI_COMMIT_SHA}
-
-Build Nginx Ingest:
-    stage: build
-    tags:
-        - docker
-    services:
-        - docker:19.03.4-dind
-    script:
-        - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
-        - docker build -t skyride/nginx-stream-kit-ingest:${CI_COMMIT_SHA} -t skyride/nginx-stream-kit-ingest:latest nginx-rtmp/
-        - docker push skyride/nginx-stream-kit-ingest:${CI_COMMIT_SHA}
