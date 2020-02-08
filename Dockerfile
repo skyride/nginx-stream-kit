@@ -35,7 +35,8 @@ RUN wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.
     --enable-openssl && \
     PATH="/bin:$PATH" make -j 4 && \
     make install && \
-    hash -r
+    hash -r && \
+    rm -rf /build/*
 
 # Python environment
 WORKDIR /app
