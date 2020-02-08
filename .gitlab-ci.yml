@@ -1,6 +1,6 @@
 stages:
   - build
-
+  - test
 
 Build Django App:
   stage: build
@@ -31,3 +31,12 @@ Build RTMP Ingest:
   script:
     - docker build -t $IMAGE_TAG nginx-rtmp/
     - docker push $IMAGE_TAG
+
+Run Tests:
+  stage: test
+  tags:
+    - docker
+  script:
+    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml pull
+    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml run --rm web ./manage.py migrate
+    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml run --rm web ./manage.py test
