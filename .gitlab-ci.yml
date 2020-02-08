@@ -16,7 +16,7 @@ Build Django App:
   services:
     - docker:19.03.4-dind
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE-django:$CI_COMMIT_SHA
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/django:$CI_COMMIT_SHA
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build --pull -t $IMAGE_TAG .
@@ -29,7 +29,7 @@ Build Nginx:
   services:
     - docker:19.03.4-dind
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE-nginx:$CI_COMMIT_SHA
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/nginx:$CI_COMMIT_SHA
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build --pull -t $IMAGE_TAG nginx/
@@ -42,7 +42,7 @@ Build RTMP Ingest:
   services:
     - docker:19.03.4-dind
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE-ingest:$CI_COMMIT_SHA
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/ingest:$CI_COMMIT_SHA
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build --pull -t $IMAGE_TAG .
