@@ -29,5 +29,5 @@ Build RTMP Ingest:
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE/ingest:$CI_COMMIT_SHA
   script:
-    - docker build --pull -t $IMAGE_TAG .
+    - docker build --pull -t $IMAGE_TAG nginx-rtmp/
     - docker push $IMAGE_TAG
