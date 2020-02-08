@@ -1,0 +1,42 @@
+stages:
+  - build
+  - test
+
+Build Django App:
+  stage: build
+  tags:
+    - docker
+  variables:
+    IMAGE_TAG: skyride/nginx-stream-kit-django:$CI_COMMIT_SHA
+  script:
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+Build Nginx:
+  stage: build
+  tags:
+    - docker
+  variables:
+    IMAGE_TAG: skyride/nginx-stream-kit-nginx:$CI_COMMIT_SHA
+  script:
+    - docker build -t $IMAGE_TAG nginx/
+    - docker push $IMAGE_TAG
+
+Build RTMP Ingest:
+  stage: build
+  tags:
+    - docker
+  variables:
+    IMAGE_TAG: skyride/nginx-stream-kit-ingest:$CI_COMMIT_SHA
+  script:
+    - docker build -t $IMAGE_TAG nginx-rtmp/
+    - docker push $IMAGE_TAG
+
+Run Tests:
+  stage: test
+  tags:
+    - docker
+  script:
+    - docker-compose -f docker-compose.ci.yml pull
+    - docker-compose -f docker-compose.ci.yml run --rm web ./manage.py migrate
+    - docker-compose -f docker-compose.ci.yml run --rm web ./manage.py test

@@ -45,5 +45,8 @@ RUN apk add --no-cache postgresql-dev jpeg-dev
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy App
+COPY . /app/
+
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=streamkit.settings
