@@ -37,6 +37,6 @@ Run Tests:
   tags:
     - docker
   script:
-    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml pull
-    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml run --rm web ./manage.py migrate
-    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml run --rm web ./manage.py test
+    - docker-compose -f docker-compose.ci.yml pull
+    - docker-compose -f docker-compose.ci.yml run --rm web ./manage.py migrate
+    - docker-compose -f docker-compose.ci.yml run --rm web ./manage.py test
