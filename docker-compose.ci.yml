@@ -3,6 +3,8 @@ version: "3.0"
 services:
   nginx:
     image: skyride/nginx-stream-kit-nginx:${CI_COMMIT_SHA}
+    ports:
+
     volumes:
       - static:/static
       - media:/media
@@ -10,6 +12,7 @@ services:
 
   nginx-rtmp:
     image: skyride/nginx-stream-kit-ingest:${CI_COMMIT_SHA}
+    ports:
     volumes:
       - hls:/hls
 
